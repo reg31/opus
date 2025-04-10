@@ -313,7 +313,7 @@ jobs:
           mkdir -p $PACKAGE_DIR/bin/windows
           
           # Copy DLLs and libs to package directory
-          find ./build -name "*.dll" -o -name "*.lib" -o -name "*.a" -type f -exec cp {} $PACKAGE_DIR/lib/windows/ \;
+          find ./build -name "*.dll" -o -name "*.lib" -o -name "*.a" -type f -exec cp {} $PACKAGE_DIR/bin/windows/ \;
           
           # Copy header files
           mkdir -p $PACKAGE_DIR/include/opus
