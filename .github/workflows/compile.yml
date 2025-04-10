@@ -120,6 +120,7 @@ jobs:
             -DANDROID_PLATFORM=android-${{ env.ANDROID_API }} \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_SHARED_LIBS=ON \
+            -DOPUS_PRESUME_NEON=ON \
             -DOPUS_BUILD_PROGRAMS=OFF \
             -DOPUS_CUSTOM_MODES=OFF \
             -DBUILD_TESTING=OFF
@@ -195,6 +196,7 @@ jobs:
             -DOPUS_CUSTOM_MODES=OFF \
             -DOPUS_BUILD_PROGRAMS=OFF \
             -DBUILD_TESTING=OFF \
+            -DOPUS_PRESUME_NEON=ON \
             -DCMAKE_OSX_ARCHITECTURES=arm64 \
             -DCMAKE_INSTALL_PREFIX=$(pwd)/install
           
@@ -249,6 +251,7 @@ jobs:
             -DOPUS_CUSTOM_MODES=OFF \
             -DOPUS_BUILD_PROGRAMS=OFF \
             -DBUILD_TESTING=OFF \
+            -DOPUS_PRESUME_NEON=ON \
             -DCMAKE_INSTALL_PREFIX=$(pwd)/install
           
           make -j$(sysctl -n hw.ncpu)
@@ -313,7 +316,7 @@ jobs:
           mkdir -p $PACKAGE_DIR/bin/windows
           
           # Copy DLLs and libs to package directory
-          find ./build -name "*.dll" -o -name "*.lib" -o -name "*.a" -type f -exec cp {} $PACKAGE_DIR/bin/windows/ \;
+          find ./build -name "*.dll" -type f -exec cp {} $PACKAGE_DIR/bin/windows/ \;
           
           # Copy header files
           mkdir -p $PACKAGE_DIR/include/opus
