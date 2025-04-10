@@ -306,6 +306,8 @@ jobs:
             -DOPUS_CUSTOM_MODES=OFF \
             -DBUILD_TESTING=OFF \
             -DCMAKE_SYSTEM_NAME=Windows \
+            -DCMAKE_C_FLAGS="-s" \
+            -DCMAKE_CXX_FLAGS="-s" \
             -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc
           
           make -j$(nproc)
@@ -352,7 +354,6 @@ jobs:
           name: "Opus Library - Daily Build"
           body: |
             Automated daily build of Opus ${{ needs.setup.outputs.opus_version }}
-            Built on: ${{ github.run_id }}
             
             This build includes binaries for:
             - Android (armeabi-v7a, arm64-v8a)
