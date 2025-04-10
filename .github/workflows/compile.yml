@@ -97,9 +97,6 @@ jobs:
           
           # Verify NDK installation
           ls -la ${ANDROID_HOME}/ndk/android-ndk-r28/toolchains/llvm/prebuilt/linux-x86_64/bin/
-
-      - name: Download models
-        run: ./autogen.sh
           
       - name: Set up environment variables
         run: |
@@ -165,7 +162,7 @@ jobs:
           ls -la ${{ env.PACKAGE_DIR }}/
           
       - name: Upload build artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: opus-android-${{ matrix.android_abi }}
           path: build/opus-android-${{ matrix.android_abi }}-${{ needs.setup.outputs.opus_version }}.zip
@@ -184,9 +181,6 @@ jobs:
       - name: Install dependencies
         run: brew install autoconf automake libtool
       
-      - name: Download models
-        run: ./autogen.sh
-        
       - name: Create Work Dir
         run: mkdir build
         
@@ -239,9 +233,6 @@ jobs:
       - name: Install dependencies
         run: brew install autoconf automake libtool
         
-      - name: Download models
-        run: ./autogen.sh
-        
       - name: Create Work Dir
         run: mkdir build
         
@@ -273,7 +264,7 @@ jobs:
           zip -r ../opus-macos-${{ needs.setup.outputs.opus_version }}.zip .
           
       - name: Upload build artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: opus-macos
           path: opus-macos-${{ needs.setup.outputs.opus_version }}.zip
@@ -291,9 +282,6 @@ jobs:
       
       - name: Install MINGW
         run: sudo apt-get install -y mingw-w64
-        
-      - name: Download models
-        run: ./autogen.sh
         
       - name: Create Work Dir
         run: mkdir build
@@ -327,7 +315,7 @@ jobs:
           zip -r ../opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip .
           
       - name: Upload build artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: opus-windows-mingw
           path: opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip
@@ -338,7 +326,7 @@ jobs:
     if: ${{ github.ref == 'refs/heads/main' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
     steps:
       - name: Download all artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: opus-builds
           
