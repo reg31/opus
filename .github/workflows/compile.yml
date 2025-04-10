@@ -369,3 +369,4 @@ jobs:
             opus-builds/opus-macos/opus-macos-*.zip
             opus-builds/opus-windows-mingw/opus-windows-mingw-*.zip
           prerelease: true
+          delete_after: "3d"
