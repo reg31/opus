@@ -194,6 +194,7 @@ jobs:
             -DCMAKE_SYSTEM_NAME=iOS \
             -DOPUS_CUSTOM_MODES=OFF \
             -DOPUS_BUILD_PROGRAMS=OFF \
+            -DBUILD_TESTING=OFF \
             -DCMAKE_OSX_ARCHITECTURES=arm64 \
             -DCMAKE_INSTALL_PREFIX=$(pwd)/install
           
@@ -247,6 +248,7 @@ jobs:
             -DBUILD_SHARED_LIBS=OFF \
             -DOPUS_CUSTOM_MODES=OFF \
             -DOPUS_BUILD_PROGRAMS=OFF \
+            -DBUILD_TESTING=OFF \
             -DCMAKE_INSTALL_PREFIX=$(pwd)/install
           
           make -j$(sysctl -n hw.ncpu)
@@ -299,6 +301,7 @@ jobs:
             -DOPUS_BUILD_PROGRAMS=OFF \
             -DBUILD_SHARED_LIBS=ON \
             -DOPUS_CUSTOM_MODES=OFF \
+            -DBUILD_TESTING=OFF \
             -DCMAKE_SYSTEM_NAME=Windows \
             -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc
           
