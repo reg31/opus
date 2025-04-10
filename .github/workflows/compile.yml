@@ -310,7 +310,7 @@ jobs:
       - name: Package libraries
         run: |
           PACKAGE_DIR=$(pwd)/package
-          mkdir -p $PACKAGE_DIR/lib/windows
+          mkdir -p $PACKAGE_DIR/bin/windows
           
           # Copy DLLs and libs to package directory
           find ./build -name "*.dll" -o -name "*.lib" -o -name "*.a" -type f -exec cp {} $PACKAGE_DIR/lib/windows/ \;
