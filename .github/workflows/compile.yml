@@ -189,7 +189,7 @@ jobs:
         run: |
           cmake .. -G "Unix Makefiles" \
             -DCMAKE_BUILD_TYPE=Release \
-            -DBUILD_SHARED_LIBS=ON \
+            -DBUILD_SHARED_LIBS=OFF \
             -DCMAKE_SYSTEM_NAME=iOS \
             -DCMAKE_OSX_ARCHITECTURES=arm64 \
             -DCMAKE_INSTALL_PREFIX=$(pwd)/install
@@ -241,7 +241,7 @@ jobs:
         run: |
           cmake .. \
             -DCMAKE_BUILD_TYPE=Release \
-            -DBUILD_SHARED_LIBS=ON \
+            -DBUILD_SHARED_LIBS=OFF \
             -DCMAKE_INSTALL_PREFIX=$(pwd)/install
           
           make -j$(sysctl -n hw.ncpu)
@@ -291,7 +291,7 @@ jobs:
         run: |
           cmake .. \
             -DCMAKE_BUILD_TYPE=Release \
-            -DOPUS_BUILD_PROGRAMS=ON \
+            -DOPUS_BUILD_PROGRAMS=OFF \
             -DBUILD_SHARED_LIBS=ON \
             -DCMAKE_SYSTEM_NAME=Windows \
             -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc
