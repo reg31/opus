@@ -1,7 +1,7 @@
 name: Build Opus Library
 env:
   OPUS_REPO: 'https://github.com/xiph/opus.git'
-  OPUS_BRANCH: 'master'
+  OPUS_BRANCH: 'main'
   SNAPSHOT_TAG: 'daily-snapshot'
 
 on:
@@ -92,7 +92,7 @@ jobs:
         run: |
           cd build
           cmake .. -DCMAKE_TOOLCHAIN_FILE=${ANDROID_HOME}/ndk/25.2.9519653/build/cmake/android.toolchain.cmake ${{ matrix.cmake_arch }} -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON
-          cmake --build . -j 2 --config Release
+          cmake --build . -j$(nproc) --config Release
           
       - name: Package libraries
         run: |
