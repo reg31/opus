@@ -220,7 +220,7 @@ jobs:
           zip -r ../opus-ios-arm64-${{ needs.setup.outputs.opus_version }}.zip .
           
       - name: Upload build artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: opus-ios-arm64
           path: opus-ios-arm64-${{ needs.setup.outputs.opus_version }}.zip
