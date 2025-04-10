@@ -10,7 +10,7 @@ on:
       opus_branch:
         description: 'Opus branch/tag to build'
         required: true
-        default: "master"
+        default: "main"
         type: string
   schedule:
     - cron: '0 0 * * *'  # Run daily at midnight UTC
@@ -56,14 +56,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        arch: [armv7, arm64]
+        arch: [arm, arm64]
         include:
-          - arch: armv7
+          - arch: arm
             android_abi: armeabi-v7a
-            cmake_arch: "-DANDROID_ABI=armeabi-v7a"
+            openssl_target: android-arm
           - arch: arm64
             android_abi: arm64-v8a
-            cmake_arch: "-DANDROID_ABI=arm64-v8a"
+            openssl_target: android-arm64
     
     steps:
       - name: Checkout repository
@@ -73,48 +73,102 @@ jobs:
           ref: ${{ needs.setup.outputs.opus_branch }}
           fetch-depth: 0
           
-      - name: Download models
-        run: ./autogen.sh
-          
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
       
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
       
-      - name: Create Work Dir
-        run: mkdir build
-      
-      - name: Configure and Build
+      - name: Install dependencies
         run: |
-          cd build
-          cmake .. -DCMAKE_TOOLCHAIN_FILE=${ANDROID_HOME}/ndk/25.2.9519653/build/cmake/android.toolchain.cmake ${{ matrix.cmake_arch }} -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON
-          cmake --build . -j$(nproc) --config Release
+          sudo apt-get update
+          sudo apt-get install -y build-essential git perl make curl llvm
+      
+      - name: Download NDK
+        run: |
+          mkdir -p ${ANDROID_HOME}/ndk
+          cd ${ANDROID_HOME}/ndk
+          curl -O https://dl.google.com/android/repository/android-ndk-r28-linux.zip
+          unzip -q android-ndk-r28-linux.zip
+          echo "ANDROID_NDK_HOME=${ANDROID_HOME}/ndk/android-ndk-r28" >> $GITHUB_ENV
+          
+          # Verify NDK installation
+          ls -la ${ANDROID_HOME}/ndk/android-ndk-r28/toolchains/llvm/prebuilt/linux-x86_64/bin/
+
+      - name: Download models
+        run: ./autogen.sh
+          
+      - name: Set up environment variables
+        run: |
+          echo "ANDROID_API=35" >> $GITHUB_ENV
+          echo "OUTPUT_DIR=$(pwd)/output/${{ matrix.android_abi }}" >> $GITHUB_ENV
+          echo "PACKAGE_DIR=$(pwd)/build" >> $GITHUB_ENV
+
+      - name: Create Work Dir
+        run: mkdir -p build
+      
+      - name: Configure
+        working-directory: ./build
+        run: |
+          # Set up NDK environment variables properly
+          export ANDROID_NDK_ROOT=$ANDROID_NDK_HOME
+          export PATH=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
+          
+          cmake .. \
+            -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake \
+            -DANDROID_ABI=${{ matrix.android_abi }} \
+            -DANDROID_PLATFORM=android-${{ env.ANDROID_API }} \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_SHARED_LIBS=ON \
+            -DOPUS_BUILD_PROGRAMS=OFF \
+            -DBUILD_TESTING=OFF
+      
+      - name: Build
+        working-directory: ./build
+        run: |
+          # Set up NDK environment variables properly
+          export ANDROID_NDK_ROOT=$ANDROID_NDK_HOME
+          export PATH=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
+          
+          make -j$(nproc)
           
       - name: Package libraries
         run: |
-          PACKAGE_DIR=$(pwd)/package
-          mkdir -p $PACKAGE_DIR/lib/${{ matrix.android_abi }}
+          mkdir -p ${{ env.PACKAGE_DIR }}
           
-          # Copy shared libraries to package directory
-          find ./build -name "*.so" -type f -exec cp {} $PACKAGE_DIR/lib/${{ matrix.android_abi }}/ \;
+          # Create a directory structure that matches what we want in the zip
+          TEMP_DIR=$(mktemp -d)
+          mkdir -p $TEMP_DIR/lib/${{ matrix.android_abi }}
           
-          # Copy header files
-          mkdir -p $PACKAGE_DIR/include
-          cp -r include/* $PACKAGE_DIR/include/
+          # Find the libraries
+          find ./build -name "*.so" -type f -exec cp {} $TEMP_DIR/lib/${{ matrix.android_abi }}/ \;
+          
+          # Strip the libraries
+          find $TEMP_DIR/lib/${{ matrix.android_abi }} -name "*.so" -exec llvm-strip --strip-all {} \;
+          
+          # Copy header files for a complete package
+          mkdir -p $TEMP_DIR/include/opus
+          cp -r include/* $TEMP_DIR/include/opus/
           
           # Create zip file
-          cd $PACKAGE_DIR
-          zip -r ../opus-android-${{ matrix.android_abi }}-${{ needs.setup.outputs.opus_version }}.zip .
+          PACKAGE_NAME="opus-android-${{ matrix.android_abi }}-${{ needs.setup.outputs.opus_version }}"
+          cd $TEMP_DIR
+          zip -r ${{ env.PACKAGE_DIR }}/$PACKAGE_NAME.zip .
+          
+          # Also create a tar.gz file as an alternative
+          tar -czf ${{ env.PACKAGE_DIR }}/$PACKAGE_NAME.tar.gz .
+          
+          # List the created packages
+          ls -la ${{ env.PACKAGE_DIR }}/
           
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
         with:
           name: opus-android-${{ matrix.android_abi }}
-          path: opus-android-${{ matrix.android_abi }}-${{ needs.setup.outputs.opus_version }}.zip
+          path: build/opus-android-${{ matrix.android_abi }}-${{ needs.setup.outputs.opus_version }}.zip
           
   build-ios:
     needs: setup
@@ -139,8 +193,15 @@ jobs:
       - name: Configure and Build for iOS arm64
         working-directory: ./build
         run: |
-          cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=arm64
-          cmake --build . -j 2 --config Release
+          cmake .. -G "Unix Makefiles" \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_SHARED_LIBS=ON \
+            -DCMAKE_SYSTEM_NAME=iOS \
+            -DCMAKE_OSX_ARCHITECTURES=arm64 \
+            -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+          
+          make -j$(sysctl -n hw.ncpu)
+          make install
           
       - name: Package libraries
         run: |
@@ -151,8 +212,8 @@ jobs:
           find ./build -name "*.dylib" -o -name "*.a" -type f -exec cp {} $PACKAGE_DIR/lib/ios/ \;
           
           # Copy header files
-          mkdir -p $PACKAGE_DIR/include
-          cp -r include/* $PACKAGE_DIR/include/
+          mkdir -p $PACKAGE_DIR/include/opus
+          cp -r include/* $PACKAGE_DIR/include/opus/
           
           # Create zip file
           cd $PACKAGE_DIR
@@ -187,8 +248,13 @@ jobs:
       - name: Configure and Build
         working-directory: ./build
         run: |
-          cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON
-          cmake --build . -j 2 --config Release
+          cmake .. \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_SHARED_LIBS=ON \
+            -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+          
+          make -j$(sysctl -n hw.ncpu)
+          make install
           
       - name: Package libraries
         run: |
@@ -199,8 +265,8 @@ jobs:
           find ./build -name "*.dylib" -o -name "*.a" -type f -exec cp {} $PACKAGE_DIR/lib/macos/ \;
           
           # Copy header files
-          mkdir -p $PACKAGE_DIR/include
-          cp -r include/* $PACKAGE_DIR/include/
+          mkdir -p $PACKAGE_DIR/include/opus
+          cp -r include/* $PACKAGE_DIR/include/opus/
           
           # Create zip file
           cd $PACKAGE_DIR
@@ -235,8 +301,14 @@ jobs:
       - name: Configure and Build
         working-directory: ./build
         run: |
-          cmake .. -DCMAKE_BUILD_TYPE=Release -DOPUS_BUILD_PROGRAMS=ON -DBUILD_SHARED_LIBS=ON -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc
-          cmake --build . -j 2 --config Release
+          cmake .. \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DOPUS_BUILD_PROGRAMS=ON \
+            -DBUILD_SHARED_LIBS=ON \
+            -DCMAKE_SYSTEM_NAME=Windows \
+            -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc
+          
+          make -j$(nproc)
           
       - name: Package libraries
         run: |
@@ -247,8 +319,8 @@ jobs:
           find ./build -name "*.dll" -o -name "*.lib" -o -name "*.a" -type f -exec cp {} $PACKAGE_DIR/lib/windows/ \;
           
           # Copy header files
-          mkdir -p $PACKAGE_DIR/include
-          cp -r include/* $PACKAGE_DIR/include/
+          mkdir -p $PACKAGE_DIR/include/opus
+          cp -r include/* $PACKAGE_DIR/include/opus/
           
           # Create zip file
           cd $PACKAGE_DIR
@@ -287,6 +359,8 @@ jobs:
             - iOS (arm64)
             - macOS
             - Windows (MinGW)
+            
+            **Note:** This snapshot may be overwritten by newer daily builds.
           files: |
             opus-builds/opus-android-armeabi-v7a/opus-android-armeabi-v7a-*.zip
             opus-builds/opus-android-arm64-v8a/opus-android-arm64-v8a-*.zip
