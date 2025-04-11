@@ -123,15 +123,15 @@ jobs:
           TEMP_DIR=$(mktemp -d)
           mkdir -p $TEMP_DIR/lib/${{ matrix.android_abi }}
           
-          # Copy installed libraries
-          cp -r ${{ env.OUTPUT_DIR }}/lib/* $TEMP_DIR/lib/${{ matrix.android_abi }}/
+          # Copy only .so files from the lib directory
+          find ${{ env.OUTPUT_DIR }}/lib -name "*.so" -type f -exec cp {} $TEMP_DIR/lib/${{ matrix.android_abi }}/ \;
           
           # Strip the libraries
           find $TEMP_DIR/lib/${{ matrix.android_abi }} -name "*.so" -exec llvm-strip --strip-all {} \;
           
           # Copy header files from install directory
-          mkdir -p $TEMP_DIR/include/opus
-          cp -r ${{ env.OUTPUT_DIR }}/include/* $TEMP_DIR/include/opus/
+          mkdir -p $TEMP_DIR/include
+          cp -r ${{ env.OUTPUT_DIR }}/include/* $TEMP_DIR/include/
           
           # Create packages
           PACKAGE_NAME="opus-android-${{ matrix.android_abi }}-${{ needs.setup.outputs.opus_version }}"
@@ -186,12 +186,12 @@ jobs:
           PACKAGE_DIR=$(pwd)/package
           mkdir -p $PACKAGE_DIR/lib/ios
           
-          # Copy installed libraries
-          cp -r ${{ env.OUTPUT_DIR }}/lib/* $PACKAGE_DIR/lib/ios/
+          # Copy only .a files from the lib directory
+          find ${{ env.OUTPUT_DIR }}/lib -name "*.a" -type f -exec cp {} $PACKAGE_DIR/lib/ios/ \;
           
           # Copy header files
-          mkdir -p $PACKAGE_DIR/include/opus
-          cp -r ${{ env.OUTPUT_DIR }}/include/* $PACKAGE_DIR/include/opus/
+          mkdir -p $PACKAGE_DIR/include
+          cp -r ${{ env.OUTPUT_DIR }}/include/* $PACKAGE_DIR/include/
           
           # Create package
           cd $PACKAGE_DIR
@@ -242,12 +242,12 @@ jobs:
           PACKAGE_DIR=$(pwd)/package
           mkdir -p $PACKAGE_DIR/lib/macos
           
-          # Copy installed libraries
-          cp -r ${{ env.OUTPUT_DIR }}/lib/* $PACKAGE_DIR/lib/macos/
+          # Copy only .a files from the lib directory
+          find ${{ env.OUTPUT_DIR }}/lib -name "*.a" -type f -exec cp {} $PACKAGE_DIR/lib/macos/ \;
           
           # Copy header files
-          mkdir -p $PACKAGE_DIR/include/opus
-          cp -r ${{ env.OUTPUT_DIR }}/include/* $PACKAGE_DIR/include/opus/
+          mkdir -p $PACKAGE_DIR/include
+          cp -r ${{ env.OUTPUT_DIR }}/include/* $PACKAGE_DIR/include/
           
           # Create package
           cd $PACKAGE_DIR
@@ -300,15 +300,13 @@ jobs:
         run: |
           PACKAGE_DIR=$(pwd)/package
           mkdir -p $PACKAGE_DIR/bin/windows
-          mkdir -p $PACKAGE_DIR/lib/windows
           
-          # Copy DLLs and libs
+          # Copy DLLs from bin directory
           cp -r ${{ env.OUTPUT_DIR }}/bin/* $PACKAGE_DIR/bin/windows/
-          cp -r ${{ env.OUTPUT_DIR }}/lib/* $PACKAGE_DIR/lib/windows/
           
           # Copy header files
-          mkdir -p $PACKAGE_DIR/include/opus
-          cp -r ${{ env.OUTPUT_DIR }}/include/* $PACKAGE_DIR/include/opus/
+          mkdir -p $PACKAGE_DIR/include
+          cp -r ${{ env.OUTPUT_DIR }}/include/* $PACKAGE_DIR/include/
           
           # Create package
           cd $PACKAGE_DIR
