@@ -260,76 +260,71 @@ jobs:
           name: opus-macos
           path: opus-macos-${{ needs.setup.outputs.opus_version }}.zip
           
-build-windows-mingw:
-  needs: setup
-  runs-on: windows-latest
-  steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        repository: xiph/opus
-        ref: ${{ needs.setup.outputs.opus_branch }}
-        fetch-depth: 0
-    
-    - name: Install MSYS2 and MinGW
-      uses: msys2/setup-msys2@v2
-      with:
-        msystem: MINGW64
-        update: true
-        install: >-
-          mingw-w64-x86_64-toolchain
-          mingw-w64-x86_64-cmake
-          make
-    
-    - name: Set up environment variables
-      shell: bash
-      run: echo "OUTPUT_DIR=$(pwd)/output/windows" >> $GITHUB_ENV
+  build-windows:
+    needs: setup
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          repository: xiph/opus
+          ref: ${{ needs.setup.outputs.opus_branch }}
+          fetch-depth: 0
       
-    - name: Configure and build
-      shell: msys2
-      run: |
-        mkdir -p build
-        cd build
+      - name: Setup MinGW
+        uses: egor-tensin/setup-mingw@v2
+        with:
+          platform: x64
+    
+      - name: Set up environment variables
+        shell: bash
+        run: echo "OUTPUT_DIR=$(pwd)/output/windows" >> $GITHUB_ENV
         
-        cmake .. \
-          -G "MSYS Makefiles" \
-          -DCMAKE_BUILD_TYPE=Release \
-          -DOPUS_BUILD_PROGRAMS=OFF \
-          -DBUILD_SHARED_LIBS=ON \
-          -DOPUS_CUSTOM_MODES=OFF \
-          -DBUILD_TESTING=OFF \
-          -DCMAKE_C_FLAGS="-s" \
-          -DCMAKE_CXX_FLAGS="-s" \
-          -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }}
+      - name: Configure and build
+        shell: bash
+        run: |
+          mkdir -p build
+          cd build
+          
+          cmake .. \
+            -G "MinGW Makefiles" \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DOPUS_BUILD_PROGRAMS=OFF \
+            -DBUILD_SHARED_LIBS=ON \
+            -DOPUS_CUSTOM_MODES=OFF \
+            -DBUILD_TESTING=OFF \
+            -DCMAKE_C_FLAGS="-s" \
+            -DCMAKE_CXX_FLAGS="-s" \
+            -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }}
+          
+          mingw32-make -j4
+          mingw32-make install
+          
+      - name: Package libraries
+        shell: bash
+        run: |
+          PACKAGE_DIR=$(pwd)/package
+          mkdir -p $PACKAGE_DIR/bin/windows
+          
+          # Copy DLLs from bin directory
+          cp -r ${{ env.OUTPUT_DIR }}/bin/* $PACKAGE_DIR/bin/windows/
+          
+          # Copy header files
+          mkdir -p $PACKAGE_DIR/include
+          cp -r ${{ env.OUTPUT_DIR }}/include/* $PACKAGE_DIR/include/
+          
+          # Create package using PowerShell
+          cd $PACKAGE_DIR
+          powershell -Command "Compress-Archive -Path * -DestinationPath ../opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip"
         
-        make -j$(nproc)
-        make install
-        
-    - name: Package libraries
-      shell: bash
-      run: |
-        PACKAGE_DIR=$(pwd)/package
-        mkdir -p $PACKAGE_DIR/bin/windows
-        
-        # Copy DLLs from bin directory
-        cp -r ${{ env.OUTPUT_DIR }}/bin/* $PACKAGE_DIR/bin/windows/
-        
-        # Copy header files
-        mkdir -p $PACKAGE_DIR/include
-        cp -r ${{ env.OUTPUT_DIR }}/include/* $PACKAGE_DIR/include/
-        
-        # Create package
-        cd $PACKAGE_DIR
-        7z a -tzip ../opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip .
-        
-    - name: Upload build artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: opus-windows-mingw
-        path: opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: opus-windows-mingw
+          path: opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip
           
   release:
-    needs: [setup, build-android, build-ios, build-macos, build-windows-mingw]
+    needs: [setup, build-android, build-ios, build-macos, build-windows]
     runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/main' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
     steps:
