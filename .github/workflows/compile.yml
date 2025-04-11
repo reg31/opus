@@ -175,7 +175,7 @@ jobs:
             -DOPUS_BUILD_PROGRAMS=OFF \
             -DBUILD_TESTING=OFF \
             -DOPUS_PRESUME_NEON=ON \
-            -DCMAKE_OSX_ARCHITECTURES=arm64 \
+            -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
             -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }}
           
           make -j$(sysctl -n hw.ncpu)
