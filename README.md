@@ -1,6 +1,6 @@
 # opus
 
-Daily build of the opus codec, taget is to be fast and minimal, feel free to clone the project.
+Daily build of the opus codec, target is to be fast and minimal, feel free to clone the project.
 
 This build includes binaries for:
 
