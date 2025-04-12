@@ -300,7 +300,6 @@ jobs:
             -DOPUS_CUSTOM_MODES=OFF \
             -DBUILD_TESTING=OFF \
             -DCMAKE_C_FLAGS="-s" \
-            -DCMAKE_CXX_FLAGS="-s" \
             -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }}
           
           make -j$(nproc)
