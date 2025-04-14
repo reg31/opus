@@ -299,7 +299,7 @@ jobs:
             -DBUILD_SHARED_LIBS=ON \
             -DOPUS_CUSTOM_MODES=OFF \
             -DBUILD_TESTING=OFF \
-            -DCMAKE_C_FLAGS="-s" \
+            -DCMAKE_C_FLAGS="-s -O3 -DNDEBUG" \
             -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }}
           
           make -j$(nproc)
