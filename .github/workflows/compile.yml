@@ -12,8 +12,8 @@ on:
         required: true
         default: "main"
         type: string
-  #schedule:
-    #- cron: '0 0 * * *'
+  schedule:
+    - cron: '0 0 * * *'
   push:
     branches: [ main ]
   pull_request:
@@ -339,7 +339,7 @@ jobs:
           path: opus-builds
           
       - name: Create release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v2.2.2
         with:
           name: "Opus Library - Daily Build"
           body: |
