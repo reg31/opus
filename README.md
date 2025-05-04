@@ -9,3 +9,4 @@ This build includes binaries for:
     macOS
     Windows (MinGW)
 
+https://github.com/xiph/opus
