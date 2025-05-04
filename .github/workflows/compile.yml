@@ -341,7 +341,6 @@ jobs:
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ env.SNAPSHOT_TAG }}
           name: "Opus Library - Daily Build"
           body: |
             Automated daily build of Opus ${{ needs.setup.outputs.opus_version }}
