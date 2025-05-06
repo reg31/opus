@@ -267,13 +267,13 @@ jobs:
       - name: Configure and build
         shell: cmd
         run: |
+          set "CC=C:\ProgramData\mingw64\mingw64\bin\gcc"
           echo "OUTPUT_DIR=$(pwd)/output/windows" >> $GITHUB_ENV
           mkdir -p build
           cd build
           
           cmake .. -G "MinGW Makefiles" \
             -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_C_COMPILER="C:\ProgramData\mingw64\mingw64\bin\gcc" \
             -DOPUS_BUILD_PROGRAMS=OFF \
             -DBUILD_SHARED_LIBS=ON \
             -DOPUS_CUSTOM_MODES=OFF \
@@ -285,7 +285,7 @@ jobs:
           cmake --install .
           
       - name: Package libraries
-        shell: msys2 {0}
+        shell: cmd
         run: |
           PACKAGE_DIR=$(pwd)/package
           mkdir -p $PACKAGE_DIR/bin/windows
