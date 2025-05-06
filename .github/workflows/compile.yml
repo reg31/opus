@@ -172,7 +172,7 @@ jobs:
           
       - name: Package libraries
         run: |
-          PACKAGE_DIR=$(pwd)/package
+          set PACKAGE_DIR=$(pwd)/package
           mkdir -p $PACKAGE_DIR/lib/ios
           
           # Copy only .a files from the lib directory
