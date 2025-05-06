@@ -271,7 +271,8 @@ jobs:
           mkdir -p build
           cd build
           
-          cmake -DCMAKE_BUILD_TYPE=Release \
+          cmake .. \
+            -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_C_COMPILER="C:\ProgramData\mingw64\mingw64\bin\gcc" \
             -DOPUS_BUILD_PROGRAMS=OFF \
             -DBUILD_SHARED_LIBS=ON \
