@@ -285,6 +285,7 @@ jobs:
           make install
           
       - name: Package libraries
+        shell: cmd
         run: |
           set PACKAGE_DIR=$(pwd)/package
           mkdir -p $PACKAGE_DIR/bin/windows
