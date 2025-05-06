@@ -285,9 +285,9 @@ jobs:
           make install
           
       - name: Package libraries
-        shell: cmd
+        shell: msys2 {0}
         run: |
-          set PACKAGE_DIR=$(pwd)/package
+          PACKAGE_DIR=$(pwd)/package
           mkdir -p $PACKAGE_DIR/bin/windows
           
           # Copy DLLs from bin directory
