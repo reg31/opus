@@ -275,7 +275,6 @@ jobs:
           set "CXX=C:\ProgramData\mingw64\mingw64\bin\g++"
           
           cmake .. \
-            -G "MSYS Makefiles" \
             -DCMAKE_BUILD_TYPE=Release \
             -DOPUS_BUILD_PROGRAMS=OFF \
             -DBUILD_SHARED_LIBS=ON \
