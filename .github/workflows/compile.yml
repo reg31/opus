@@ -270,12 +270,9 @@ jobs:
           echo "OUTPUT_DIR=$(pwd)/output/windows" >> $GITHUB_ENV
           mkdir -p build
           cd build
-
-          set "CC=C:\ProgramData\mingw64\mingw64\bin\gcc"
-          set "CXX=C:\ProgramData\mingw64\mingw64\bin\g++"
           
-          cmake .. \
-            -DCMAKE_BUILD_TYPE=Release \
+          cmake -DCMAKE_BUILD_TYPE=Release \
+            -CMAKE_C_COMPILER="C:\ProgramData\mingw64\mingw64\bin\gcc"
             -DOPUS_BUILD_PROGRAMS=OFF \
             -DBUILD_SHARED_LIBS=ON \
             -DOPUS_CUSTOM_MODES=OFF \
