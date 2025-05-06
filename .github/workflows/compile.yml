@@ -278,11 +278,11 @@ jobs:
             -DBUILD_SHARED_LIBS=ON \
             -DOPUS_CUSTOM_MODES=OFF \
             -DBUILD_TESTING=OFF \
-            -DCMAKE_C_FLAGS="-03 -s" \
+            -DCMAKE_C_FLAGS="-O3 -s" \
             -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }}
           
-          cmake --build . --parallel
-          cmake --install .
+          make -j$(sysctl -n hw.ncpu)
+          make install
           
       - name: Package libraries
         shell: cmd
