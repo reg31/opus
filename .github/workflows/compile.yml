@@ -259,29 +259,39 @@ jobs:
           repository: xiph/opus
           ref: ${{ needs.setup.outputs.opus_branch }}
           fetch-depth: 0
+      
+      - name: Install MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            mingw-w64-x86_64-toolchain
+            mingw-w64-x86_64-cmake
+            make
+            zip
     
-      - name: Install dependencies
-        run: |
-          choco install -y mingw
+      - name: Set up environment variables
+        shell: msys2 {0}
+        run: echo "OUTPUT_DIR=$(pwd)/output/windows" >> $GITHUB_ENV
         
       - name: Configure and build
-        shell: cmd
+        shell: msys2 {0}
         run: |
-          set "CC=C:\ProgramData\mingw64\mingw64\bin\gcc"
-          echo "OUTPUT_DIR=$(pwd)/output/windows" >> $GITHUB_ENV
           mkdir -p build
           cd build
           
-          cmake .. -G "MinGW Makefiles" \
+          cmake .. \
+            -G "MSYS Makefiles" \
             -DCMAKE_BUILD_TYPE=Release \
             -DOPUS_BUILD_PROGRAMS=OFF \
             -DBUILD_SHARED_LIBS=ON \
             -DOPUS_CUSTOM_MODES=OFF \
             -DBUILD_TESTING=OFF \
-            -DCMAKE_C_FLAGS="-O3 -s" \
+            -DCMAKE_C_FLAGS="-s" \
             -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }}
           
-          make -j$(sysctl -n hw.ncpu)
+          make -j$(nproc)
           make install
           
       - name: Package libraries
