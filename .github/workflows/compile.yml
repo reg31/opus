@@ -349,4 +349,12 @@ jobs:
             opus-builds/opus-macos/opus-macos-*.zip
             opus-builds/opus-windows-mingw/opus-windows-mingw-*.zip
           prerelease: true
-          delete_after: "3d"
+
+      - name: Cleanup repository
+        uses: dev-drprasad/delete-older-releases@v0.3.4
+        with:
+          keep_latest: 2
+          delete_tags: true
+          delete_prerelease_only: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
