@@ -349,4 +349,10 @@ jobs:
             opus-builds/opus-macos/opus-macos-*.zip
             opus-builds/opus-windows-mingw/opus-windows-mingw-*.zip
           prerelease: true
-          delete_after: "7d"
+
+      - name: Cleanup repository
+        uses: jay2610/delete-older-releases@1
+        with:
+          keep_latest: 3
+          delete_type: 'prerelease'
+          target_branch: 'main'
