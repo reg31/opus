@@ -254,19 +254,17 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Setup RAM Disk
-        uses: chad-golden/setup-ramdisk@v1
+        uses: samypr100/setup-dev-drive@v3
         with:
-          size-in-mb: 2048
-          drive-letter: 'R'
-          copy-workspace: false 
-    
+          workspace-copy: true
+  
       - name: Checkout repository
-        uses: actions/checkout@v4        
+        uses: actions/checkout@v4
         with:
           repository: xiph/opus
           ref: ${{ needs.setup.outputs.opus_branch }}
           fetch-depth: 0
-          path: 'R:'
+          path: ${{ env.DEV_DRIVE_WORKSPACE }}
       
       - name: Install MSYS2
         uses: msys2/setup-msys2@v2
@@ -280,13 +278,14 @@ jobs:
             zip
     
       - name: Set up environment variables
+        working-directory: ${{ env.DEV_DRIVE_WORKSPACE }}
         shell: msys2 {0}
         run: echo "OUTPUT_DIR=$(pwd)/output/windows" >> $GITHUB_ENV
         
       - name: Configure and build
+        working-directory: ${{ env.DEV_DRIVE_WORKSPACE }}
         shell: msys2 {0}
         run: |
-          R:
           mkdir -p build
           cd build
           
@@ -304,9 +303,9 @@ jobs:
           make install
           
       - name: Package libraries
+        working-directory: ${{ env.DEV_DRIVE_WORKSPACE }}
         shell: msys2 {0}
         run: |
-          R:
           PACKAGE_DIR=$(pwd)/package
           mkdir -p $PACKAGE_DIR/bin/windows
           
@@ -326,11 +325,6 @@ jobs:
         with:
           name: opus-windows-mingw
           path: opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip
-
-      - name: Dismount RAM Disk
-        uses: chad-golden/setup-ramdisk/dismount@v1
-        with:
-          drive-letter: 'R' 
           
   release:
     needs: [setup, build-android, build-ios, build-macos, build-windows-mingw]
