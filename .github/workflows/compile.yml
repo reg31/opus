@@ -253,10 +253,12 @@ jobs:
     needs: setup
     runs-on: windows-latest
     steps:
-      - name: Setup RAM Disk
-        uses: samypr100/setup-dev-drive@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
-          workspace-copy: true
+          repository: xiph/opus
+          ref: ${{ needs.setup.outputs.opus_branch }}
+          fetch-depth: 0
       
       - name: Install MSYS2
         uses: msys2/setup-msys2@v2
@@ -268,18 +270,14 @@ jobs:
             mingw-w64-x86_64-cmake
             make
             zip
-            git
     
       - name: Set up environment variables
-        working-directory: ${{ env.DEV_DRIVE_WORKSPACE }}
         shell: msys2 {0}
         run: echo "OUTPUT_DIR=$(pwd)/output/windows" >> $GITHUB_ENV
         
       - name: Configure and build
-        working-directory: ${{ env.DEV_DRIVE_WORKSPACE }}
         shell: msys2 {0}
         run: |
-          git clone ${{ env.OPUS_REPO }} -b  ${{ env.OPUS_BRANCH }} .
           mkdir -p build
           cd build
           
@@ -297,7 +295,6 @@ jobs:
           make install
           
       - name: Package libraries
-        working-directory: ${{ env.DEV_DRIVE_WORKSPACE }}
         shell: msys2 {0}
         run: |
           PACKAGE_DIR=$(pwd)/package
@@ -318,7 +315,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: opus-windows-mingw
-          path: ${{ env.DEV_DRIVE_WORKSPACE }}/opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip
+          path: opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip
           
   release:
     needs: [setup, build-android, build-ios, build-macos, build-windows-mingw]
