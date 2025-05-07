@@ -258,12 +258,10 @@ jobs:
         with:
           workspace-copy: true
   
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          repository: xiph/opus
-          ref: ${{ needs.setup.outputs.opus_branch }}
-          fetch-depth: 0
+      - name: Clone repository
+        working-directory: ${{ env.DEV_DRIVE_WORKSPACE }}
+        shell: cmd
+        run: git clone ${{ env.OPUS_REPO }} -b  ${{ env.OPUS_BRANCH }} .
       
       - name: Install MSYS2
         uses: msys2/setup-msys2@v2
