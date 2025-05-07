@@ -318,7 +318,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: opus-windows-mingw
-          path: opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip
+          path: ${{ env.DEV_DRIVE_WORKSPACE }}/opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip
           
   release:
     needs: [setup, build-android, build-ios, build-macos, build-windows-mingw]
