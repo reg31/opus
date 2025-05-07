@@ -264,7 +264,6 @@ jobs:
           repository: xiph/opus
           ref: ${{ needs.setup.outputs.opus_branch }}
           fetch-depth: 0
-          path: ${{ env.DEV_DRIVE_WORKSPACE }}
       
       - name: Install MSYS2
         uses: msys2/setup-msys2@v2
