@@ -253,12 +253,20 @@ jobs:
     needs: setup
     runs-on: windows-latest
     steps:
+      - name: Setup RAM Disk
+        uses: chad-golden/setup-ramdisk@v1
+        with:
+          size-in-mb: 2048
+          drive-letter: 'R'
+          copy-workspace: false 
+    
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4        
         with:
           repository: xiph/opus
           ref: ${{ needs.setup.outputs.opus_branch }}
           fetch-depth: 0
+          path: 'R:'
       
       - name: Install MSYS2
         uses: msys2/setup-msys2@v2
@@ -278,6 +286,7 @@ jobs:
       - name: Configure and build
         shell: msys2 {0}
         run: |
+          R:
           mkdir -p build
           cd build
           
@@ -297,6 +306,7 @@ jobs:
       - name: Package libraries
         shell: msys2 {0}
         run: |
+          R:
           PACKAGE_DIR=$(pwd)/package
           mkdir -p $PACKAGE_DIR/bin/windows
           
@@ -316,6 +326,11 @@ jobs:
         with:
           name: opus-windows-mingw
           path: opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip
+
+      - name: Dismount RAM Disk
+        uses: chad-golden/setup-ramdisk/dismount@v1
+        with:
+          drive-letter: 'R' 
           
   release:
     needs: [setup, build-android, build-ios, build-macos, build-windows-mingw]
@@ -353,7 +368,7 @@ jobs:
       - name: Cleanup repository
         uses: dev-drprasad/delete-older-releases@v0.3.4
         with:
-          keep_latest: 2
+          keep_latest: 3
           delete_tags: true
           delete_prerelease_only: true
         env:
