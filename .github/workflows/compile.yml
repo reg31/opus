@@ -121,7 +121,7 @@ jobs:
           cp -r ${{ env.OUTPUT_DIR }}/include/* $TEMP_DIR/include/
           
           # Create packages
-          7z a "opus-android-${{ matrix.android_abi }}-${{ needs.setup.outputs.opus_version }}" $TEMP_DIR/*
+          7z a "opus-android-${{ matrix.android_abi }}-${{ needs.setup.outputs.opus_version }}.zip" $TEMP_DIR/*
           
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
