@@ -76,9 +76,6 @@ jobs:
           distribution: 'temurin'
           java-version: '24'
       
-      - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y build-essential git perl make curl llvm
-      
       - name: Set up environment variables
         run: |
           echo "ANDROID_API=35" >> $GITHUB_ENV
@@ -111,12 +108,13 @@ jobs:
           
           TEMP_DIR=$(mktemp -d)
           mkdir -p $TEMP_DIR/lib/${{ matrix.android_abi }}
+          export ANDROID_NDK_BIN=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin
           
           # Copy only .so files from the lib directory
           find ${{ env.OUTPUT_DIR }}/lib -name "*.so" -type f -exec cp {} $TEMP_DIR/lib/${{ matrix.android_abi }}/ \;
           
           # Strip the libraries
-          find $TEMP_DIR/lib/${{ matrix.android_abi }} -name "*.so" -exec llvm-strip --strip-all {} \;
+          find $TEMP_DIR/lib/${{ matrix.android_abi }} -name "*.so" -exec $ANDROID_NDK_BIN/llvm-strip --strip-all {} \;
           
           # Copy header files from install directory
           mkdir -p $TEMP_DIR/include
@@ -260,56 +258,39 @@ jobs:
           ref: ${{ needs.setup.outputs.opus_branch }}
           fetch-depth: 0
       
-      - name: Install MSYS2
-        uses: msys2/setup-msys2@v2
-        with:
-          msystem: MINGW64
-          update: true
-          install: >-
-            mingw-w64-x86_64-toolchain
-            mingw-w64-x86_64-cmake
-            make
-            zip
-    
-      - name: Set up environment variables
-        shell: msys2 {0}
-        run: echo "OUTPUT_DIR=$(pwd)/output/windows" >> $GITHUB_ENV
+      - name: Install dependencies
+        run: choco install -y mingw
         
       - name: Configure and build
-        shell: msys2 {0}
+        shell: cmd
         run: |
+          set CFLAGS=-O3 -s
+          set CXXFLAGS=-O3 -s
+          set "OUTPUT_DIR=%CD%\install"
+          set "CC=C:\ProgramData\mingw64\mingw64\bin\gcc"
+          set "CXX=C:\ProgramData\mingw64\mingw64\bin\g++"    
+          
           mkdir -p build
           cd build
           
           cmake .. \
-            -G "MSYS Makefiles" \
             -DCMAKE_BUILD_TYPE=Release \
             -DOPUS_BUILD_PROGRAMS=OFF \
             -DBUILD_SHARED_LIBS=ON \
             -DOPUS_CUSTOM_MODES=OFF \
             -DBUILD_TESTING=OFF \
-            -DCMAKE_C_FLAGS="-s" \
-            -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }}
-          
-          make -j$(nproc)
-          make install
-          
-      - name: Package libraries
-        shell: msys2 {0}
+            -DCMAKE_INSTALL_PREFIX="%OUTPUT_DIR%"
+
+      - name: Build Qt
+        shell: cmd
         run: |
-          PACKAGE_DIR=$(pwd)/package
-          mkdir -p $PACKAGE_DIR/bin/windows
-          
-          # Copy DLLs from bin directory
-          cp -r ${{ env.OUTPUT_DIR }}/bin/* $PACKAGE_DIR/bin/windows/
-          
-          # Copy header files
-          mkdir -p $PACKAGE_DIR/include
-          cp -r ${{ env.OUTPUT_DIR }}/include/* $PACKAGE_DIR/include/
-          
-          # Create package
-          cd $PACKAGE_DIR
-          zip -r ../opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip .
+          cd build
+          cmake --build . --parallel
+          cmake --install .
+
+      - name: Package artifacts
+        shell: cmd
+        run: 7z a "qt-windows-mingw-${{ matrix.build_type }}-${{ needs.setup.outputs.qt_branch }}.zip" .\install\*
         
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
