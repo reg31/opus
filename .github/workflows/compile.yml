@@ -107,11 +107,11 @@ jobs:
           mkdir -p ${{ env.PACKAGE_DIR }}
           
           TEMP_DIR=$(mktemp -d)
-          mkdir -p $TEMP_DIR/lib/${{ matrix.android_abi }}
+          mkdir -p $TEMP_DIR/lib
           export ANDROID_NDK_BIN=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin
           
           # Copy only .so files from the lib directory
-          find ${{ env.OUTPUT_DIR }}/lib -name "*.so" -type f -exec cp {} $TEMP_DIR/lib/${{ matrix.android_abi }}/ \;
+          find ${{ env.OUTPUT_DIR }}/lib -name "*.so" -type f -exec cp {} $TEMP_DIR/lib/ \;
           
           # Strip the libraries
           find $TEMP_DIR/lib/${{ matrix.android_abi }} -name "*.so" -exec $ANDROID_NDK_BIN/llvm-strip --strip-all {} \;
@@ -171,10 +171,10 @@ jobs:
       - name: Package libraries
         run: |
           PACKAGE_DIR=$(pwd)/package
-          mkdir -p $PACKAGE_DIR/lib/ios
+          mkdir -p $PACKAGE_DIR/lib
           
           # Copy only .a files from the lib directory
-          find ${{ env.OUTPUT_DIR }}/lib -name "*.a" -type f -exec cp {} $PACKAGE_DIR/lib/ios/ \;
+          find ${{ env.OUTPUT_DIR }}/lib -name "*.a" -type f -exec cp {} $PACKAGE_DIR/lib/ \;
           
           # Copy header files
           mkdir -p $PACKAGE_DIR/include
@@ -228,10 +228,10 @@ jobs:
       - name: Package libraries
         run: |
           PACKAGE_DIR=$(pwd)/package
-          mkdir -p $PACKAGE_DIR/lib/macos
+          mkdir -p $PACKAGE_DIR/lib
           
           # Copy only .a files from the lib directory
-          find ${{ env.OUTPUT_DIR }}/lib -name "*.a" -type f -exec cp {} $PACKAGE_DIR/lib/macos/ \;
+          find ${{ env.OUTPUT_DIR }}/lib -name "*.a" -type f -exec cp {} $PACKAGE_DIR/lib/ \;
           
           # Copy header files
           mkdir -p $PACKAGE_DIR/include
@@ -285,7 +285,7 @@ jobs:
 
       - name: Package artifacts
         shell: cmd
-        run: 7z a "opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip" .\install\*
+        run: 7z a "opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip" .\install\* -x .\install\lib
         
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
