@@ -121,10 +121,7 @@ jobs:
           cp -r ${{ env.OUTPUT_DIR }}/include/* $TEMP_DIR/include/
           
           # Create packages
-          PACKAGE_NAME="opus-android-${{ matrix.android_abi }}-${{ needs.setup.outputs.opus_version }}"
-          cd $TEMP_DIR
-          zip -r ${{ env.PACKAGE_DIR }}/$PACKAGE_NAME.zip .
-          tar -czf ${{ env.PACKAGE_DIR }}/$PACKAGE_NAME.tar.gz .
+          7z a "opus-android-${{ matrix.android_abi }}-${{ needs.setup.outputs.opus_version }}" $TEMP_DIR//*
           
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -181,8 +178,7 @@ jobs:
           cp -r ${{ env.OUTPUT_DIR }}/include/* $PACKAGE_DIR/include/
           
           # Create package
-          cd $PACKAGE_DIR
-          zip -r ../opus-ios-arm64-${{ needs.setup.outputs.opus_version }}.zip .
+          7z a opus-ios-arm64-${{ needs.setup.outputs.opus_version }}.zip ./package/*
           
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -238,8 +234,7 @@ jobs:
           cp -r ${{ env.OUTPUT_DIR }}/include/* $PACKAGE_DIR/include/
           
           # Create package
-          cd $PACKAGE_DIR
-          zip -r ../opus-macos-${{ needs.setup.outputs.opus_version }}.zip .
+          7z a opus-macos-${{ needs.setup.outputs.opus_version }}.zip ./package/*
           
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -285,7 +280,7 @@ jobs:
 
       - name: Package artifacts
         shell: cmd
-        run: 7z a "opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip" .\install\* -x .\install\lib
+        run: 7z a "opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip" .\install\* -x!.\install\lib
         
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
