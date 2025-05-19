@@ -273,7 +273,7 @@ jobs:
           mkdir -p build
           cd build
           
-          cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DOPUS_BUILD_PROGRAMS=OFF -DBUILD_SHARED_LIBS=ON \
+          cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DOPUS_BUILD_PROGRAMS=OFF -DBUILD_SHARED_LIBS=ON ^
             -DOPUS_CUSTOM_MODES=OFF -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX="%OUTPUT_DIR%"
 
       - name: Build Opus for Windows
