@@ -281,7 +281,7 @@ jobs:
             -DBUILD_TESTING=OFF \
             -DCMAKE_INSTALL_PREFIX="%OUTPUT_DIR%"
 
-      - name: Build Qt
+      - name: Build Opus for Windows
         shell: cmd
         run: |
           cd build
