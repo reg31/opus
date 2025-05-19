@@ -114,7 +114,7 @@ jobs:
           find ${{ env.OUTPUT_DIR }}/lib -name "*.so" -type f -exec cp {} $TEMP_DIR/lib/ \;
           
           # Strip the libraries
-          find $TEMP_DIR/lib/${{ matrix.android_abi }} -name "*.so" -exec $ANDROID_NDK_BIN/llvm-strip --strip-all {} \;
+          find $TEMP_DIR/lib -name "*.so" -exec $ANDROID_NDK_BIN/llvm-strip --strip-all {} \;
           
           # Copy header files from install directory
           mkdir -p $TEMP_DIR/include
