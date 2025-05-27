@@ -254,7 +254,14 @@ jobs:
           fetch-depth: 0
       
       - name: Install dependencies
-        run: choco install -y mingw
+        run: choco install -y wget
+
+      - name: Download mingw
+        shell: cmd
+        run: |
+          set MINGW_ARCHIVE=x86_64-15.1.0-release-posix-seh-ucrt-rt_v12-rev0.7z
+          wget https://github.com/niXman/mingw-builds-binaries/releases/download/15.1.0-rt_v12-rev0/%MINGW_ARCHIVE%
+          7z x %MINGW_ARCHIVE%
         
       - name: Configure and build
         shell: cmd
@@ -262,8 +269,8 @@ jobs:
           set CFLAGS=-O3 -s
           set CXXFLAGS=-O3 -s
           set "OUTPUT_DIR=%CD%\install"
-          set "CC=C:\ProgramData\mingw64\mingw64\bin\gcc"
-          set "CXX=C:\ProgramData\mingw64\mingw64\bin\g++"    
+          set "CC=%CD%\mingw64\mingw64\bin\gcc"
+          set "CXX=%CD%\mingw64\mingw64\bin\g++"   
           
           mkdir -p build
           cd build
