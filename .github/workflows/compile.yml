@@ -269,8 +269,8 @@ jobs:
           set CFLAGS=-O3 -s
           set CXXFLAGS=-O3 -s
           set "OUTPUT_DIR=%CD%\install"
-          set "CC=%CD%\mingw64\mingw64\bin\gcc"
-          set "CXX=%CD%\mingw64\mingw64\bin\g++"   
+          set "CC=%CD%\mingw64\bin\gcc"
+          set "CXX=%CD%\mingw64\bin\g++"   
           
           mkdir -p build
           cd build
