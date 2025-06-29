@@ -128,6 +128,7 @@ jobs:
         with:
           name: opus-android-${{ matrix.android_abi }}
           path: opus-android-${{ matrix.android_abi }}-${{ needs.setup.outputs.opus_version }}.zip
+          retention-days: 5
           
   build-ios:
     needs: setup
@@ -185,6 +186,7 @@ jobs:
         with:
           name: opus-ios-arm64
           path: opus-ios-arm64-${{ needs.setup.outputs.opus_version }}.zip
+          retention-days: 5
           
   build-macos:
     needs: setup
@@ -241,6 +243,7 @@ jobs:
         with:
           name: opus-macos
           path: opus-macos-${{ needs.setup.outputs.opus_version }}.zip
+          retention-days: 5
           
   build-windows-mingw:
     needs: setup
@@ -294,6 +297,7 @@ jobs:
         with:
           name: opus-windows-mingw
           path: opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip
+          retention-days: 5
           
   release:
     needs: [setup, build-android, build-ios, build-macos, build-windows-mingw]
