@@ -36,7 +36,7 @@ jobs:
           fi
 
       - name: Checkout Opus
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: xiph/opus
           ref: ${{ steps.set-branch.outputs.opus_branch }}
@@ -64,14 +64,14 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: xiph/opus
           ref: ${{ needs.setup.outputs.opus_branch }}
           fetch-depth: 0
           
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '24'
@@ -135,7 +135,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: xiph/opus
           ref: ${{ needs.setup.outputs.opus_branch }}
@@ -195,7 +195,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: xiph/opus
           ref: ${{ needs.setup.outputs.opus_branch }}
@@ -252,7 +252,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: xiph/opus
           ref: ${{ needs.setup.outputs.opus_branch }}
