@@ -3,7 +3,9 @@ env:
   OPUS_REPO: 'https://github.com/xiph/opus.git'
   OPUS_BRANCH: 'main'
   SNAPSHOT_TAG: 'daily-snapshot'
-
+  NO_STRIP_BUILD_FLAGS: -DCMAKE_CXX_FLAGS_RELEASE="-O3 -DNDEBUG" -DCMAKE_C_FLAGS_RELEASE="-O3 -DNDEBUG"
+  WITH_STRIP_BUILD_FLAGS: -DCMAKE_CXX_FLAGS_RELEASE="-O3 -DNDEBUG -s" -DCMAKE_C_FLAGS_RELEASE="-O3 -DNDEBUG -s"
+  
 on:
   workflow_dispatch:
     inputs:
@@ -97,7 +99,8 @@ jobs:
             -DOPUS_BUILD_PROGRAMS=OFF \
             -DOPUS_CUSTOM_MODES=OFF \
             -DBUILD_TESTING=OFF \
-            -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }}
+            -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }} \
+            ${{ env.NO_STRIP_BUILD_FLAGS }}
           
           make -j$(nproc)
           make install
@@ -281,8 +284,6 @@ jobs:
       - name: Configure and build
         shell: cmd
         run: |
-          set CFLAGS=-O3 -s
-          set CXXFLAGS=-O3 -s
           set "OUTPUT_DIR=%CD%\install"
           set "CC=%CD%\mingw64\bin\gcc"
           set "CXX=%CD%\mingw64\bin\g++"   
@@ -291,7 +292,7 @@ jobs:
           cd build
           
           cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DOPUS_BUILD_PROGRAMS=OFF -DBUILD_SHARED_LIBS=ON ^
-            -DOPUS_CUSTOM_MODES=OFF -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX="%OUTPUT_DIR%"
+            -DOPUS_CUSTOM_MODES=OFF -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX="%OUTPUT_DIR%" ${{ env.WITH_STRIP_BUILD_FLAGS }}
 
       - name: Build Opus for Windows
         shell: cmd
