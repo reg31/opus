@@ -169,8 +169,8 @@ jobs:
             -DBUILD_TESTING=OFF \
             -DOPUS_PRESUME_NEON=ON \
             -DCMAKE_OSX_ARCHITECTURES="arm64" \
-            -DCMAKE_C_FLAGS="-march=armv8.2-a+dotprod -O2 -DNDEBUG" \
-            -DCMAKE_CXX_FLAGS="-march=armv8.2-a+dotprod -O2 -DNDEBUG" \
+            -DCMAKE_C_FLAGS="-march=armv8.2-a+dotprod" \
+            -DCMAKE_CXX_FLAGS="-march=armv8.2-a+dotprod" \
             -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }}
           
           make -j$(sysctl -n hw.ncpu)
@@ -233,8 +233,7 @@ jobs:
             -DBUILD_TESTING=OFF \
             -DOPUS_PRESUME_NEON=ON \
             -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
-            -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }} \
-            ${{ env.NO_STRIP_BUILD_FLAGS }}
+            -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }}
           
           make -j$(sysctl -n hw.ncpu)
           make install
