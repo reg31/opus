@@ -99,7 +99,7 @@ jobs:
             -DOPUS_BUILD_PROGRAMS=OFF \
             -DOPUS_CUSTOM_MODES=OFF \
             -DBUILD_TESTING=OFF \
-            -DCMAKE_CXX_COMPILER_FORCED=ON \
+            -DCMAKE_C_COMPILER_WORKS=ON \
             -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }} \
             ${{ env.NO_STRIP_BUILD_FLAGS }}
           
