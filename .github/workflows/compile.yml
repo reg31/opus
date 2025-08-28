@@ -98,7 +98,7 @@ jobs:
             -DOPUS_BUILD_PROGRAMS=OFF \
             -DOPUS_CUSTOM_MODES=OFF \
             -DBUILD_TESTING=OFF \
-            -DCMAKE_ANDROID_API=35 \
+            -DDANDROID_PLATFORM=35 \
             -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }} \
             ${{ env.NO_STRIP_BUILD_FLAGS }}
           
