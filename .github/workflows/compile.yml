@@ -80,7 +80,7 @@ jobs:
       
       - name: Set up environment variables
         run: |
-          echo "ANDROID_API=latest" >> $GITHUB_ENV
+          echo "api_level=latest" >> $GITHUB_ENV
           echo "OUTPUT_DIR=$(pwd)/output/${{ matrix.android_abi }}" >> $GITHUB_ENV
           echo "PACKAGE_DIR=$(pwd)/build" >> $GITHUB_ENV
       
@@ -99,6 +99,7 @@ jobs:
             -DOPUS_BUILD_PROGRAMS=OFF \
             -DOPUS_CUSTOM_MODES=OFF \
             -DBUILD_TESTING=OFF \
+            -Dapi_level=latest \
             -DCMAKE_C_COMPILER_WORKS=ON \
             -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }} \
             ${{ env.NO_STRIP_BUILD_FLAGS }}
