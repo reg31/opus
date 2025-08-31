@@ -90,7 +90,7 @@ jobs:
           cd build
 
           if [ "${{ matrix.arch }}" = "arm" ]; then
-            OPTS="-OPUS_MAY_HAVE_NEON=ON"
+            OPTS="-DOPUS_MAY_HAVE_NEON=ON"
           else
             OPTS="-DOPUS_PRESUME_NEON=ON"
           fi
