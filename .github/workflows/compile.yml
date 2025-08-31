@@ -88,6 +88,12 @@ jobs:
         run: |
           mkdir -p build
           cd build
+
+          if [ "${{ matrix.arch }}" = "arm" ]; then
+            OPTS="-OPUS_MAY_HAVE_NEON=ON"
+          else
+            OPTS="-DOPUS_PRESUME_NEON=ON"
+          fi
           
           cmake .. \
             -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_LATEST_HOME/build/cmake/android.toolchain.cmake \
@@ -97,7 +103,8 @@ jobs:
             -DANDROID_PLATFORM=latest \
             -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }} \
             ${{ env.NO_STRIP_BUILD_FLAGS }} \
-            ${{ env.COMMON_FLAGS }}
+            ${{ env.COMMON_FLAGS }} \
+            $OPTS
           
           make -j$(nproc)
           make install
@@ -218,19 +225,13 @@ jobs:
         run: |
           mkdir -p build
           cd build
-          if [ "${{ matrix.arch }}" = "arm" ]; then
-            OPTS="-OPUS_MAY_HAVE_NEON=ON"
-          else
-            OPTS="-DOPUS_PRESUME_NEON=ON"
-          fi
           
           cmake .. \
             -DBUILD_SHARED_LIBS=OFF \
             -DOPUS_PRESUME_NEON=ON \
             -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
             -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }} \
-            ${{ env.COMMON_FLAGS }} \
-            $OPTS
+            ${{ env.COMMON_FLAGS }}
           
           make -j$(sysctl -n hw.ncpu)
           make install
