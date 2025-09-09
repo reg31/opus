@@ -239,8 +239,8 @@ jobs:
             -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }} \
             ${{ env.COMMON_FLAGS }}
           
-          make -j$(sysctl -n hw.ncpu)
-          make install
+          cmake --build . -j$(sysctl -n hw.ncpu)
+          cmake --install . --strip
           
       - name: Package libraries
         run: |
@@ -298,13 +298,7 @@ jobs:
           mkdir -p build
           cd build
           
-          cmake .. -G "MinGW Makefiles" -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX="%OUTPUT_DIR%" ^
-            ${{ env.WITH_STRIP_BUILD_FLAGS }} -DOPUS_PRESUME_NEON=ON
-
-      - name: Build Opus for Windows
-        shell: cmd
-        run: |
-          cd build
+          cmake .. -G "MinGW Makefiles" -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX="%OUTPUT_DIR%" ${{ env.WITH_STRIP_BUILD_FLAGS }}
           cmake --build . -j%NUMBER_OF_PROCESSORS%
           cmake --install .
 
