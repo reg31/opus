@@ -101,7 +101,7 @@ jobs:
             -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_LATEST_HOME/build/cmake/android.toolchain.cmake \
             -DANDROID_ABI=${{ matrix.android_abi }} \
             -DBUILD_SHARED_LIBS=ON \
-            -CMAKE_EXE_LINKER_FLAGS_RELEASE=-s \
+            -DCMAKE_EXE_LINKER_FLAGS_RELEASE=-s \
             -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }} \
             ${{ env.NO_STRIP_BUILD_FLAGS }} \
             ${{ env.COMMON_FLAGS }} \
