@@ -278,14 +278,14 @@ jobs:
       - name: setup dev drive
         uses: samypr100/setup-dev-drive@v3
         with:          
-          mount-path: "E:"          
+          #mount-path: "E:"          
           drive-type: Fixed
           workspace-copy: true
           trusted-dev-drive: true
 
       - name: Checkout repository
         run: |
-          git clone -b ${{ needs.setup.outputs.opus_branch }} https://github.com/xiph/opus.git .
+          git clone -b ${{ needs.setup.outputs.opus_branch }} ${{ env.OPUS_REPO }} .
       
       - name: Install dependencies
         run: choco install -y wget
