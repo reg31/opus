@@ -278,9 +278,7 @@ jobs:
       - name: setup dev drive
         uses: samypr100/setup-dev-drive@v3
         with:          
-          #mount-path: "E:"          
           drive-type: Fixed
-          workspace-copy: true
           trusted-dev-drive: true
 
       - name: Checkout repository
