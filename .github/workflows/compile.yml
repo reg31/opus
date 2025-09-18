@@ -270,19 +270,28 @@ jobs:
     strategy:
       matrix:
         build_type: [release]
-    steps:
+    steps:    
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
           repository: xiph/opus
           ref: ${{ needs.setup.outputs.opus_branch }}
           fetch-depth: 0
+
+      - name: setup dev drive
+        uses: samypr100/setup-dev-drive@v3
+        with:
+          workspace-copy: true
+          trusted-dev-drive: true
+          drive-type: Fixed
       
       - name: Install dependencies
+        working-directory: ${{ env.DEV_DRIVE_WORKSPACE }}
         run: choco install -y wget
 
       - name: Download mingw
         shell: cmd
+        working-directory: ${{ env.DEV_DRIVE_WORKSPACE }}
         run: |
           set MINGW_ARCHIVE=x86_64-15.1.0-release-posix-seh-ucrt-rt_v12-rev0.7z
           wget https://github.com/niXman/mingw-builds-binaries/releases/download/15.1.0-rt_v12-rev0/%MINGW_ARCHIVE%
@@ -290,6 +299,7 @@ jobs:
         
       - name: Configure and build
         shell: cmd
+        working-directory: ${{ env.DEV_DRIVE_WORKSPACE }}
         run: |
           set "OUTPUT_DIR=%CD%\install"
           set "CC=%CD%\mingw64\bin\gcc"
@@ -304,13 +314,14 @@ jobs:
 
       - name: Package artifacts
         shell: cmd
+        working-directory: ${{ env.DEV_DRIVE_WORKSPACE }}
         run: 7z a "opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip" .\install\* -x!.\install\lib
         
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: opus-windows-mingw
-          path: opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip
+          path: ${{ env.DEV_DRIVE_WORKSPACE }}/opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip
           retention-days: 5
           
   release:
