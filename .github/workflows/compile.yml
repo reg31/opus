@@ -37,7 +37,6 @@ jobs:
           else
             echo "opus_branch=${{ env.OPUS_BRANCH }}" >> $GITHUB_OUTPUT
           fi
-
       - name: Checkout Opus
         uses: actions/checkout@v5
         with:
@@ -52,7 +51,6 @@ jobs:
         run: |
           VERSION=$(git describe --tags --always 2>/dev/null || echo "unknown")
           echo "opus_version=$VERSION" >> $GITHUB_OUTPUT
-
   build-android:
     needs: setup
     runs-on: ubuntu-latest
@@ -90,7 +88,6 @@ jobs:
         run: |
           mkdir -p build
           cd build
-
           if [ "${{ matrix.arch }}" = "arm" ]; then
             OPTS="-DOPUS_MAY_HAVE_NEON=ON"
           else
@@ -270,31 +267,34 @@ jobs:
     strategy:
       matrix:
         build_type: [release]
-    defaults:
-      run:
-        shell: cmd
-        working-directory: "E:"
-    steps:
+    steps:    
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          repository: xiph/opus
+          ref: ${{ needs.setup.outputs.opus_branch }}
+          fetch-depth: 0
+
       - name: setup dev drive
         uses: samypr100/setup-dev-drive@v3
-        with:          
+        with:
           drive-type: Fixed
-          trusted-dev-drive: true
-
-      - name: Checkout repository
-        run: |
-          git clone -b ${{ needs.setup.outputs.opus_branch }} ${{ env.OPUS_REPO }} .
+          workspace-copy: true
+          #trusted-dev-drive: true
       
       - name: Install dependencies
+        working-directory: ${{ env.DEV_DRIVE_WORKSPACE }}
         run: choco install -y wget
 
       - name: Download mingw
+        working-directory: ${{ env.DEV_DRIVE_WORKSPACE }}
         run: |
           set MINGW_ARCHIVE=x86_64-15.1.0-release-posix-seh-ucrt-rt_v12-rev0.7z
           wget https://github.com/niXman/mingw-builds-binaries/releases/download/15.1.0-rt_v12-rev0/%MINGW_ARCHIVE%
           7z x %MINGW_ARCHIVE%
         
       - name: Configure and build
+        working-directory: ${{ env.DEV_DRIVE_WORKSPACE }}
         run: |
           set "OUTPUT_DIR=%CD%\install"
           set "CC=%CD%\mingw64\bin\gcc"
@@ -306,15 +306,16 @@ jobs:
           cmake .. -G "MinGW Makefiles" -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX="%OUTPUT_DIR%" ${{ env.WITH_STRIP_BUILD_FLAGS }}
           cmake --build . -j%NUMBER_OF_PROCESSORS%
           cmake --install .
-
+          
       - name: Package artifacts
+        working-directory: ${{ env.DEV_DRIVE_WORKSPACE }}
         run: 7z a "opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip" .\install\* -x!.\install\lib
         
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: opus-windows-mingw
-          path: opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip
+          path: ${{ env.DEV_DRIVE_WORKSPACE }}/opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip
           retention-days: 5
           
   release:
@@ -348,7 +349,6 @@ jobs:
             opus-builds/opus-ios-arm64/opus-ios-arm64-*.zip
             opus-builds/opus-macos/opus-macos-*.zip
             opus-builds/opus-windows-mingw/opus-windows-mingw-*.zip
-
       - name: Cleanup repository
         uses: dev-drprasad/delete-older-releases@v0.3.4
         with:
