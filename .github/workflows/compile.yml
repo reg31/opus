@@ -72,7 +72,7 @@ jobs:
           ref: ${{ needs.setup.outputs.opus_branch }}
           fetch-depth: 0
           
-      - name: Set up JDK
+      - name: Setup JDK
         uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
@@ -278,7 +278,7 @@ jobs:
           ref: ${{ needs.setup.outputs.opus_branch }}
           fetch-depth: 0
 
-      - name: setup dev drive
+      - name: Setup dev drive
         uses: samypr100/setup-dev-drive@v3
         with:
           drive-type: Fixed
