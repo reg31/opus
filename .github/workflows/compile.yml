@@ -99,6 +99,7 @@ jobs:
             -DANDROID_ABI=${{ matrix.android_abi }} \
             -DBUILD_SHARED_LIBS=ON \
             -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }} \
+            --DCMAKE_SHARED_LINKER_FLAGS="LINKER:--pack-dyn-relocs=android+relr,--use-android-relr-tags" \
             ${{ env.NO_STRIP_BUILD_FLAGS }} \
             ${{ env.COMMON_FLAGS }} \
             $OPTS
