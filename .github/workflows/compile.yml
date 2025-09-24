@@ -4,8 +4,8 @@ env:
   OPUS_BRANCH: 'main'
   SNAPSHOT_TAG: 'daily-snapshot'
   COMMON_FLAGS: -DOPUS_BUILD_PROGRAMS=OFF -DOPUS_BUILD_TESTING=OFF -DOPUS_CUSTOM_MODES=OFF -DCMAKE_BUILD_TYPE=Release
-  NO_STRIP_BUILD_FLAGS: -DCMAKE_CXX_FLAGS_RELEASE="-O2 -DNDEBUG" -DCMAKE_C_FLAGS_RELEASE="-O2 -DNDEBUG"
-  WITH_STRIP_BUILD_FLAGS: -DCMAKE_CXX_FLAGS_RELEASE="-O2 -DNDEBUG -s" -DCMAKE_C_FLAGS_RELEASE="-O2 -DNDEBUG -s"
+  NO_STRIP_BUILD_FLAGS: -DCMAKE_C_FLAGS_RELEASE="-O2 -DNDEBUG"
+  WITH_STRIP_BUILD_FLAGS: -DCMAKE_C_FLAGS_RELEASE="-O2 -DNDEBUG -s"
   
 on:
   workflow_dispatch:
@@ -309,7 +309,7 @@ jobs:
           
           cmake .. -G "MinGW Makefiles" -DBUILD_SHARED_LIBS=ON ^
           -DCMAKE_INSTALL_PREFIX="%OUTPUT_DIR%" ${{ env.WITH_STRIP_BUILD_FLAGS }} ^
-          -DCMAKE_SHARED_LINKER_FLAGS="-Wl,--pack-dyn-relocs=android+relr,--use-android-relr-tags,--gc-sections"
+          -DCMAKE_SHARED_LINKER_FLAGS="-Wl,--gc-sections"
           cmake --build . -j%NUMBER_OF_PROCESSORS%
           cmake --install .
           
