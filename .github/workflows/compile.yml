@@ -99,7 +99,7 @@ jobs:
             -DANDROID_ABI=${{ matrix.android_abi }} \
             -DBUILD_SHARED_LIBS=ON \
             -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }} \
-            -DCMAKE_SHARED_LINKER_FLAGS="-Wl,--pack-dyn-relocs=android+relr,--use-android-relr-tags,--gc-sections" \
+            -DCMAKE_SHARED_LINKER_FLAGS="-Wl,--pack-dyn-relocs=android+relr,--use-android-relr-tags,--gc-sections,--icf==safe" \
             ${{ env.NO_STRIP_BUILD_FLAGS }} \
             ${{ env.COMMON_FLAGS }} \
             $OPTS
@@ -169,8 +169,7 @@ jobs:
             -DBUILD_SHARED_LIBS=OFF \
             -DCMAKE_SYSTEM_NAME=iOS \
             -DCMAKE_OSX_ARCHITECTURES="arm64" \
-            -DCMAKE_C_FLAGS="-march=armv8.2-a+dotprod -O2 -DNDEBUG" \         
-            -DCMAKE_SHARED_LINKER_FLAGS="-Wl,-dead_strip" \
+            -DCMAKE_C_FLAGS="-march=armv8.2-a+dotprod -O2 -DNDEBUG" \
             -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }} \
             ${{ env.COMMON_FLAGS }}
           
@@ -234,6 +233,7 @@ jobs:
             -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
             -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }} \
             -DCMAKE_SHARED_LINKER_FLAGS="-Wl,-dead_strip,--icf==safe" \
+            ${{ env.NO_STRIP_BUILD_FLAGS }} \
             ${{ env.COMMON_FLAGS }}
           
           cmake --build . -j$(sysctl -n hw.ncpu)
@@ -308,7 +308,7 @@ jobs:
           
           cmake .. -G "MinGW Makefiles" -DBUILD_SHARED_LIBS=ON ^
           -DCMAKE_INSTALL_PREFIX="%OUTPUT_DIR%" ${{ env.WITH_STRIP_BUILD_FLAGS }} ^
-          -DCMAKE_SHARED_LINKER_FLAGS="-Wl,--gc-sections"
+          -DCMAKE_SHARED_LINKER_FLAGS="-Wl,--gc-sections,--icf==safe"
           cmake --build . -j%NUMBER_OF_PROCESSORS%
           cmake --install .
           
