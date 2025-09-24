@@ -171,7 +171,8 @@ jobs:
             -DOPUS_PRESUME_NEON=ON \
             -DCMAKE_OSX_ARCHITECTURES="arm64" \
             -DCMAKE_C_FLAGS="-march=armv8.2-a+dotprod" \
-            -DCMAKE_CXX_FLAGS="-march=armv8.2-a+dotprod" \
+            -DCMAKE_CXX_FLAGS="-march=armv8.2-a+dotprod" \            
+            -DCMAKE_SHARED_LINKER_FLAGS="-Wl,-dead_strip,--icf==safe" \
             -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }} \
             ${{ env.COMMON_FLAGS }}
           
@@ -235,6 +236,7 @@ jobs:
             -DOPUS_PRESUME_NEON=ON \
             -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
             -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }} \
+            -DCMAKE_SHARED_LINKER_FLAGS="-Wl,-dead_strip,--icf==safe" \
             ${{ env.COMMON_FLAGS }}
           
           cmake --build . -j$(sysctl -n hw.ncpu)
