@@ -171,7 +171,6 @@ jobs:
             -DCMAKE_OSX_ARCHITECTURES="arm64" \
             -DCMAKE_C_FLAGS="-march=armv8.2-a+dotprod -O2 -DNDEBUG" \
             -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }} \
-            -DCMAKE_SHARED_LINKER_FLAGS="-Wl,-s" \
             ${{ env.COMMON_FLAGS }}
           
           cmake --build . -j$(sysctl -n hw.ncpu)
@@ -233,7 +232,6 @@ jobs:
             -DBUILD_SHARED_LIBS=OFF \
             -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
             -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }} \
-            -DCMAKE_SHARED_LINKER_FLAGS="-Wl,-s" \
             ${{ env.NO_STRIP_BUILD_FLAGS }} \
             ${{ env.COMMON_FLAGS }}
           
