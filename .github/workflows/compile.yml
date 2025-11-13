@@ -129,7 +129,7 @@ jobs:
           7z a "opus-android-${{ matrix.android_abi }}-${{ needs.setup.outputs.opus_version }}.zip" $TEMP_DIR/*
           
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: opus-android-${{ matrix.android_abi }}
           path: opus-android-${{ matrix.android_abi }}-${{ needs.setup.outputs.opus_version }}.zip
@@ -192,7 +192,7 @@ jobs:
           7z a opus-ios-arm64-${{ needs.setup.outputs.opus_version }}.zip ./package/*
           
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: opus-ios-arm64
           path: opus-ios-arm64-${{ needs.setup.outputs.opus_version }}.zip
@@ -254,7 +254,7 @@ jobs:
           7z a opus-macos-${{ needs.setup.outputs.opus_version }}.zip ./package/*
           
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: opus-macos
           path: opus-macos-${{ needs.setup.outputs.opus_version }}.zip
@@ -278,7 +278,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup dev drive
-        uses: samypr100/setup-dev-drive@v3
+        uses: samypr100/setup-dev-drive@v4
         with:
           drive-type: Fixed
           workspace-copy: true
@@ -316,7 +316,7 @@ jobs:
         run: 7z a "opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip" .\install\* -x!.\install\lib
         
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: opus-windows-mingw
           path: ${{ env.DEV_DRIVE_WORKSPACE }}/opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip
@@ -328,7 +328,7 @@ jobs:
     if: ${{ github.ref == 'refs/heads/main' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
     steps:
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           path: opus-builds
           
