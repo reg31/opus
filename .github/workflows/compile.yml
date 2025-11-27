@@ -38,7 +38,7 @@ jobs:
             echo "opus_branch=${{ env.OPUS_BRANCH }}" >> $GITHUB_OUTPUT
           fi
       - name: Checkout Opus
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: xiph/opus
           ref: ${{ steps.set-branch.outputs.opus_branch }}
@@ -143,7 +143,7 @@ jobs:
         build_type: [release]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: xiph/opus
           ref: ${{ needs.setup.outputs.opus_branch }}
@@ -206,7 +206,7 @@ jobs:
         build_type: [release]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: xiph/opus
           ref: ${{ needs.setup.outputs.opus_branch }}
@@ -271,7 +271,7 @@ jobs:
         shell: cmd
     steps:    
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: xiph/opus
           ref: ${{ needs.setup.outputs.opus_branch }}
