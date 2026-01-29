@@ -166,12 +166,11 @@ jobs:
           xcode-version: latest-stable
 
       - name: Cache DerivedData
-        uses: actions/cache@v5
+        uses: irgaly/xcode-cache@v1
         with:
-          path: ~/Library/Developer/Xcode/DerivedData
           key: xcode-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
-          restore-keys: |
-            xcode-cache-deriveddata-${{ github.workflow }}-
+          restore-keys: xcode-cache-deriveddata-${{ github.workflow }}-
+          deriveddata-directory: build
       
       - name: Set up environment variables
         run: echo "OUTPUT_DIR=$(pwd)/output/ios" >> $GITHUB_ENV
@@ -237,12 +236,11 @@ jobs:
           xcode-version: latest-stable
 
       - name: Cache DerivedData
-        uses: actions/cache@v5
+        uses: irgaly/xcode-cache@v1
         with:
-          path: ~/Library/Developer/Xcode/DerivedData
           key: xcode-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
-          restore-keys: |
-            xcode-cache-deriveddata-${{ github.workflow }}-
+          restore-keys: xcode-cache-deriveddata-${{ github.workflow }}-
+          deriveddata-directory: build
         
       - name: Set up environment variables
         run: echo "OUTPUT_DIR=$(pwd)/output/macos" >> $GITHUB_ENV
@@ -382,6 +380,7 @@ jobs:
             opus-builds/opus-ios-arm64/opus-ios-arm64-*.zip
             opus-builds/opus-macos/opus-macos-*.zip
             opus-builds/opus-windows-mingw/opus-windows-mingw-*.zip
+            
       - name: Cleanup repository
         uses: dev-drprasad/delete-older-releases@v0.3.4
         with:
