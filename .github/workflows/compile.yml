@@ -170,6 +170,7 @@ jobs:
         with:
           key: xcode-cache-deriveddata-${{ github.workflow }}-ios-${{ github.sha }}
           restore-keys: xcode-cache-deriveddata-${{ github.workflow }}-ios-
+          sourcepackages-directory: build
           deriveddata-directory: build
       
       - name: Set up environment variables
@@ -240,6 +241,7 @@ jobs:
         with:
           key: xcode-cache-deriveddata-${{ github.workflow }}-macos-${{ github.sha }}
           restore-keys: xcode-cache-deriveddata-${{ github.workflow }}-macos-
+          sourcepackages-directory: build
           deriveddata-directory: build
         
       - name: Set up environment variables
@@ -301,27 +303,17 @@ jobs:
           repository: xiph/opus
           ref: ${{ needs.setup.outputs.opus_branch }}
           fetch-depth: 0
-
-      - name: Setup dev drive
-        uses: samypr100/setup-dev-drive@v4
-        with:
-          drive-type: Fixed
-          workspace-copy: true
-          #trusted-dev-drive: true
       
       - name: Install dependencies
-        working-directory: ${{ env.DEV_DRIVE_WORKSPACE }}
         run: choco install -y wget
 
       - name: Download mingw
-        working-directory: ${{ env.DEV_DRIVE_WORKSPACE }}
         run: |
           set MINGW_ARCHIVE=x86_64-15.1.0-release-posix-seh-ucrt-rt_v12-rev0.7z
           wget https://github.com/niXman/mingw-builds-binaries/releases/download/15.1.0-rt_v12-rev0/%MINGW_ARCHIVE%
           7z x %MINGW_ARCHIVE%
         
       - name: Configure and build
-        working-directory: ${{ env.DEV_DRIVE_WORKSPACE }}
         run: |
           set "OUTPUT_DIR=%CD%\install"
           set "CC=%CD%\mingw64\bin\gcc"
@@ -339,14 +331,13 @@ jobs:
           cmake --install .
           
       - name: Package artifacts
-        working-directory: ${{ env.DEV_DRIVE_WORKSPACE }}
         run: 7z a "opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip" .\install\* -x!.\install\lib
         
       - name: Upload build artifact
         uses: actions/upload-artifact@v6
         with:
           name: opus-windows-mingw
-          path: ${{ env.DEV_DRIVE_WORKSPACE }}/opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip
+          path: ./opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip
           retention-days: 5
           
   release:
