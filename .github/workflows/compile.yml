@@ -165,12 +165,13 @@ jobs:
         with:
           xcode-version: latest-stable
 
-      - name: Checkout repository
-        uses: irgaly/xcode-cache@v1
+      - name: Cache DerivedData
+        uses: actions/cache@v5
         with:
+          path: ~/Library/Developer/Xcode/DerivedData
           key: xcode-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
-          restore-keys: xcode-cache-deriveddata-${{ github.workflow }}-
-          deriveddata-directory: ~/Library/Developer/Xcode/DerivedData
+          restore-keys: |
+            xcode-cache-deriveddata-${{ github.workflow }}-
       
       - name: Set up environment variables
         run: echo "OUTPUT_DIR=$(pwd)/output/ios" >> $GITHUB_ENV
@@ -235,12 +236,13 @@ jobs:
         with:
           xcode-version: latest-stable
 
-      - name: Checkout repository
-        uses: irgaly/xcode-cache@v1
+      - name: Cache DerivedData
+        uses: actions/cache@v5
         with:
+          path: ~/Library/Developer/Xcode/DerivedData
           key: xcode-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
-          restore-keys: xcode-cache-deriveddata-${{ github.workflow }}-
-          deriveddata-directory: ~/Library/Developer/Xcode/DerivedData
+          restore-keys: |
+            xcode-cache-deriveddata-${{ github.workflow }}-
         
       - name: Set up environment variables
         run: echo "OUTPUT_DIR=$(pwd)/output/macos" >> $GITHUB_ENV
