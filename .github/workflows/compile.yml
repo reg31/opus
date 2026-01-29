@@ -168,8 +168,8 @@ jobs:
       - name: Cache DerivedData
         uses: irgaly/xcode-cache@v1
         with:
-          key: xcode-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
-          restore-keys: xcode-cache-deriveddata-${{ github.workflow }}-
+          key: xcode-cache-deriveddata-${{ github.workflow }}-ios-${{ github.sha }}
+          restore-keys: xcode-cache-deriveddata-${{ github.workflow }}-ios-
           deriveddata-directory: build
       
       - name: Set up environment variables
@@ -238,8 +238,8 @@ jobs:
       - name: Cache DerivedData
         uses: irgaly/xcode-cache@v1
         with:
-          key: xcode-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
-          restore-keys: xcode-cache-deriveddata-${{ github.workflow }}-
+          key: xcode-cache-deriveddata-${{ github.workflow }}-macos-${{ github.sha }}
+          restore-keys: xcode-cache-deriveddata-${{ github.workflow }}-macos-
           deriveddata-directory: build
         
       - name: Set up environment variables
