@@ -162,6 +162,8 @@ jobs:
         with:
           key: xcode-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
           restore-keys: xcode-cache-deriveddata-${{ github.workflow }}-
+          deriveddata-directory: DerivedData
+          sourcepackages-directory: SourcePackages
       
       - name: Install dependencies
         run: brew install autoconf automake libtool
@@ -231,6 +233,8 @@ jobs:
         with:
           key: xcode-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
           restore-keys: xcode-cache-deriveddata-${{ github.workflow }}-
+          deriveddata-directory: DerivedData
+          sourcepackages-directory: SourcePackages
       
       - name: Install dependencies
         run: brew install autoconf automake libtool
