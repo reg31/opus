@@ -149,16 +149,19 @@ jobs:
     strategy:
       matrix:
         build_type: [release]
-    steps:
-      - name: Run sccache-cache
-        uses: mozilla-actions/sccache-action@v0.0.9
-        
+    steps:        
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
           repository: xiph/opus
           ref: ${{ needs.setup.outputs.opus_branch }}
           fetch-depth: 0
+
+      - name: Checkout repository
+        uses: irgaly/xcode-cache@v1
+        with:
+          key: opus-ios-arm64-${{ needs.setup.outputs.opus_version }}
+          restore-keys: opus-ios-arm64-${{ needs.setup.outputs.opus_version }}
       
       - name: Install dependencies
         run: brew install autoconf automake libtool
@@ -175,8 +178,6 @@ jobs:
         run: |
           mkdir -p build
           cd build
-          export CMAKE_CXX_COMPILER_LAUNCHER="sccache"
-          export CMAKE_C_COMPILER_LAUNCHER="sccache"
           
           cmake .. -G "Unix Makefiles" \
             -DBUILD_SHARED_LIBS=OFF \
@@ -217,16 +218,19 @@ jobs:
     strategy:
       matrix:
         build_type: [release]
-    steps:
-      - name: Run sccache-cache
-        uses: mozilla-actions/sccache-action@v0.0.9
-        
+    steps:        
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
           repository: xiph/opus
           ref: ${{ needs.setup.outputs.opus_branch }}
           fetch-depth: 0
+
+      - name: Checkout repository
+        uses: irgaly/xcode-cache@v1
+        with:
+          key: opus-macos-${{ needs.setup.outputs.opus_version }}
+          restore-keys: opus-macos-${{ needs.setup.outputs.opus_version }}
       
       - name: Install dependencies
         run: brew install autoconf automake libtool
@@ -243,9 +247,6 @@ jobs:
         run: |
           mkdir -p build
           cd build
-
-          export CMAKE_CXX_COMPILER_LAUNCHER="sccache"
-          export CMAKE_C_COMPILER_LAUNCHER="sccache"
           
           cmake .. \
             -DBUILD_SHARED_LIBS=OFF \
