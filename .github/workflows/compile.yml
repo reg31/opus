@@ -302,8 +302,8 @@ jobs:
           ref: ${{ needs.setup.outputs.opus_branch }}
           fetch-depth: 0
       
-      - name: Install dependencies
-        run: choco install -y -a mingw
+      - name: Set up MinGW
+        uses: egor-tensin/setup-mingw@v3
         
       - name: Configure and build
         run: |
@@ -314,7 +314,7 @@ jobs:
           mkdir -p build
           cd build
           
-          cmake .. -G "MinGW Makefiles" -DBUILD_SHARED_LIBS=ON ^
+          cmake .. -G Ninja -DBUILD_SHARED_LIBS=ON ^
           -DCMAKE_INSTALL_PREFIX="%OUTPUT_DIR%" ${{ env.WITH_STRIP_BUILD_FLAGS }} ^
           -DCMAKE_SHARED_LINKER_FLAGS="-Wl,--gc-sections"
           
