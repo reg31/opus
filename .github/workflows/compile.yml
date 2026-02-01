@@ -55,7 +55,7 @@ jobs:
           
   build-android:
     needs: setup
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     strategy:
       matrix:
         build_type: [release]
@@ -305,17 +305,14 @@ jobs:
       - name: Install dependencies
         run: choco install -y wget
 
-      - name: Download mingw
-        run: |
-          set MINGW_ARCHIVE=x86_64-15.1.0-release-posix-seh-ucrt-rt_v12-rev0.7z
-          wget https://github.com/niXman/mingw-builds-binaries/releases/download/15.1.0-rt_v12-rev0/%MINGW_ARCHIVE%
-          7z x %MINGW_ARCHIVE%
+      - name: Set up MinGW
+        uses: egor-tensin/setup-mingw@v3
+        with:
+          platform: x64
         
       - name: Configure and build
         run: |
-          set "OUTPUT_DIR=%CD%\install"
-          set "CC=%CD%\mingw64\bin\gcc"
-          set "CXX=%CD%\mingw64\bin\g++"  
+          set "OUTPUT_DIR=%CD%\install"  
           set "CMAKE_C_COMPILER_LAUNCHER=sccache"
           set "CMAKE_CXX_COMPILER_LAUNCHER=sccache"
           
