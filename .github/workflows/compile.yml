@@ -303,7 +303,7 @@ jobs:
           fetch-depth: 0
       
       - name: Install dependencies
-        run: choco install -y mingw
+        run: choco install -y -a mingw
         
       - name: Configure and build
         run: |
