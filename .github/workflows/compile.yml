@@ -25,7 +25,7 @@ on:
 
 jobs:
   setup:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     outputs:
       opus_branch: ${{ steps.set-branch.outputs.opus_branch }}
       opus_version: ${{ steps.get-version.outputs.opus_version }}
@@ -55,7 +55,7 @@ jobs:
           
   build-android:
     needs: setup
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         build_type: [release]
