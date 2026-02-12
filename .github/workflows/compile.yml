@@ -176,6 +176,9 @@ jobs:
           mkdir -p build
           cd build
           
+          export CMAKE_CXX_COMPILER_LAUNCHER="sccache"
+          export CMAKE_C_COMPILER_LAUNCHER="sccache"
+          
           cmake .. -G "Unix Makefiles" \
             -DBUILD_SHARED_LIBS=OFF \
             -DCMAKE_SYSTEM_NAME=iOS \
@@ -241,6 +244,9 @@ jobs:
         run: |
           mkdir -p build
           cd build
+          
+          export CMAKE_CXX_COMPILER_LAUNCHER="sccache"
+          export CMAKE_C_COMPILER_LAUNCHER="sccache"
           
           cmake .. \
             -DBUILD_SHARED_LIBS=OFF \
