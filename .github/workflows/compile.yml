@@ -107,7 +107,7 @@ jobs:
             -DANDROID_ABI=${{ matrix.android_abi }} \
             -DBUILD_SHARED_LIBS=ON \
             -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }} \
-            -DCMAKE_SHARED_LINKER_FLAGS="-Wl,--pack-dyn-relocs=android+relr,--use-android-relr-tags,--gc-sections,--icf=safe,-flto=thin" \
+            -DCMAKE_SHARED_LINKER_FLAGS="-Wl,--pack-dyn-relocs=android+relr,--use-android-relr-tags,--gc-sections,--icf=safe,--flto=thin" \
             ${{ env.NO_STRIP_BUILD_FLAGS }} \
             ${{ env.COMMON_FLAGS }} \
             $OPTS
@@ -184,7 +184,7 @@ jobs:
             -DCMAKE_SYSTEM_NAME=iOS \
             -DCMAKE_OSX_ARCHITECTURES="arm64" \
             -DCMAKE_C_FLAGS="-march=armv8.2-a+dotprod -O2 -DNDEBUG" \
-            -DCMAKE_SHARED_LINKER_FLAGS="-Wl,--pack-dyn-relocs=relr,--gc-sections,--icf=safe,-flto=thin"
+            -DCMAKE_SHARED_LINKER_FLAGS="-Wl,--pack-dyn-relocs=relr,--gc-sections,--icf=safe,--flto=thin"
             -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }} \
             ${{ env.COMMON_FLAGS }}
           
@@ -253,7 +253,7 @@ jobs:
             -DBUILD_SHARED_LIBS=OFF \
             -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" \
             -DCMAKE_INSTALL_PREFIX=${{ env.OUTPUT_DIR }} \
-            -DCMAKE_SHARED_LINKER_FLAGS="-Wl,--pack-dyn-relocs=relr,--gc-sections,--icf=safe,-flto=thin"
+            -DCMAKE_SHARED_LINKER_FLAGS="-Wl,--pack-dyn-relocs=relr,--gc-sections,--icf=safe,--flto=thin"
             ${{ env.NO_STRIP_BUILD_FLAGS }} \
             ${{ env.COMMON_FLAGS }}
           
