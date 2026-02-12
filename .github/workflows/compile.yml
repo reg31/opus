@@ -73,6 +73,7 @@ jobs:
           repository: xiph/opus
           ref: ${{ needs.setup.outputs.opus_branch }}
           fetch-depth: 0
+          
       - name: Setup sccache
         uses: mozilla-actions/sccache-action@v0.0.9
           
@@ -164,7 +165,7 @@ jobs:
         with:
           xcode-version: latest-stable
 
-       - name: Setup sccache
+      - name: Setup sccache
         uses: mozilla-actions/sccache-action@v0.0.9
       
       - name: Set up environment variables
