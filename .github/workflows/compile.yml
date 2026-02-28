@@ -136,7 +136,7 @@ jobs:
           7z a "opus-android-${{ matrix.android_abi }}-${{ needs.setup.outputs.opus_version }}.zip" $TEMP_DIR/*
           
       - name: Upload build artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: opus-android-${{ matrix.android_abi }}
           path: opus-android-${{ matrix.android_abi }}-${{ needs.setup.outputs.opus_version }}.zip
@@ -205,7 +205,7 @@ jobs:
           7z a opus-ios-arm64-${{ needs.setup.outputs.opus_version }}.zip ./package/*
           
       - name: Upload build artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: opus-ios-arm64
           path: opus-ios-arm64-${{ needs.setup.outputs.opus_version }}.zip
@@ -273,7 +273,7 @@ jobs:
           7z a opus-macos-${{ needs.setup.outputs.opus_version }}.zip ./package/*
           
       - name: Upload build artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: opus-macos
           path: opus-macos-${{ needs.setup.outputs.opus_version }}.zip
@@ -322,7 +322,7 @@ jobs:
         run: 7z a "opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip" .\install\* -x!.\install\lib
         
       - name: Upload build artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: opus-windows-mingw
           path: ./opus-windows-mingw-${{ needs.setup.outputs.opus_version }}.zip
