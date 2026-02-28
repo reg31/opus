@@ -334,7 +334,7 @@ jobs:
     if: ${{ github.ref == 'refs/heads/main' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
     steps:
       - name: Download all artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           path: opus-builds
           
