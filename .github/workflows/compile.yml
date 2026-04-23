@@ -75,7 +75,7 @@ jobs:
           fetch-depth: 0
           
       - name: Setup sccache
-        uses: mozilla-actions/sccache-action@v0.0.9
+        uses: mozilla-actions/sccache-action@v0.0.10
           
       - name: Setup JDK
         uses: actions/setup-java@v5
@@ -165,7 +165,7 @@ jobs:
           xcode-version: latest-stable
 
       - name: Setup sccache
-        uses: mozilla-actions/sccache-action@v0.0.9
+        uses: mozilla-actions/sccache-action@v0.0.10
       
       - name: Set up environment variables
         run: echo "OUTPUT_DIR=$(pwd)/output/ios" >> $GITHUB_ENV
@@ -234,7 +234,7 @@ jobs:
           xcode-version: latest-stable
 
       - name: Setup sccache
-        uses: mozilla-actions/sccache-action@v0.0.9
+        uses: mozilla-actions/sccache-action@v0.0.10
         
       - name: Set up environment variables
         run: echo "OUTPUT_DIR=$(pwd)/output/macos" >> $GITHUB_ENV
@@ -297,7 +297,7 @@ jobs:
           fetch-depth: 0
       
       - name: Setup sccache
-        uses: mozilla-actions/sccache-action@v0.0.9
+        uses: mozilla-actions/sccache-action@v0.0.10
         
       - name: Set up MinGW
         uses: egor-tensin/setup-mingw@v3
